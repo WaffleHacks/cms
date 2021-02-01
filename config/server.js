@@ -7,7 +7,7 @@ module.exports = ({ env }) => ({
       secret: env('JWT_SECRET'),
     },
     admin: {
-      url: "/",
+      url: env('PUBLIC_URL'),
       serveAdminPanel: true,
     }
   },
