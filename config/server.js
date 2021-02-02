@@ -8,6 +8,7 @@ module.exports = ({ env }) => ({
     },
     admin: {
       url: env('PUBLIC_URL'),
+      path: env('PUBLIC_URL'),
       serveAdminPanel: true,
     }
   },
