@@ -6,10 +6,7 @@ module.exports = ({ env }) => ({
     auth: {
       secret: env('JWT_SECRET'),
     },
-    admin: {
-      // url: env('PUBLIC_URL'),
-      path: "/dashboard",
-      serveAdminPanel: true,
-    }
+    serveAdminPanel: true,
+    url: '/'
   },
 });
