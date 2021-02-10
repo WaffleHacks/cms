@@ -9,6 +9,7 @@ module.exports = ({ env }) => ({
     settings: {
       defaultFrom: `cms@${env('MAILGUN_DOMAIN')}`,
       defaultReplyTo: `no-reply@${env('MAILGUN_DOMAIN')}`
+    }
   },
   upload: {
     provider: 'aws-s3',
