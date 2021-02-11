@@ -1,3 +1,3 @@
 # CMS
 
-The CMS for [Wafflehacks](https://wafflehacks.dev).
+The CMS for [WaffleHacks](https://wafflehacks.dev).
