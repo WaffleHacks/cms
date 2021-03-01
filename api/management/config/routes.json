@@ -1,9 +1,0 @@
-{
-  "routes": [
-    {
-      "method": "POST",
-      "path": "/management/register",
-      "handler": "management.register"
-    }
-  ]
-}

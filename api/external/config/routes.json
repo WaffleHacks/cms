@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/external/register",
+      "handler": "external.register"
+    }
+  ]
+}
