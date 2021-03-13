@@ -41,6 +41,6 @@ module.exports = {
       roles: [editor.id]
     });
 
-    return {"success": true, "token": created.registrationToken};
+    return {"success": true, "url": `${process.env.PUBLIC_URL}/dashboard/auth/register?registrationToken=${created.registrationToken}`};
   },
 }
