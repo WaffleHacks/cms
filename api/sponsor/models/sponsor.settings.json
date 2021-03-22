@@ -27,6 +27,16 @@
       ],
       "plugin": "upload",
       "required": true
+    },
+    "tier": {
+      "type": "enumeration",
+      "enum": [
+        "platinum",
+        "gold",
+        "silver",
+        "bronze"
+      ],
+      "required": true
     }
   }
 }
