@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_footer_categories",
+  "info": {
+    "name": "Category",
+    "icon": "list-ul"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "string",
+      "required": true
+    },
+    "Link": {
+      "type": "component",
+      "repeatable": true,
+      "component": "footer.link"
+    }
+  }
+}
