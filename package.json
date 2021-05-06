@@ -9,9 +9,9 @@
     "build": "strapi build",
     "strapi": "strapi"
   },
-  "devDependencies": {},
   "dependencies": {
     "knex": "0.21.18",
+    "passport-discord": "^0.1.4",
     "pg": "^8.5.1",
     "pg-connection-string": "^2.4.0",
     "strapi": "3.6.1",
