@@ -18,7 +18,7 @@ module.exports = ({ env }) => ({
           createStrategy: strapi => new DiscordStrategy({
             clientID: env("DISCORD_CLIENT_ID"),
             clientSecret: env("DISCORD_CLIENT_SECRET"),
-            callbackURL: strapi.admin.services.passport.getStrategyCallbackURL("discord"),
+            callbackURL: env("PUBLIC_URL") + strapi.admin.services.passport.getStrategyCallbackURL("discord"),
             scope: ["identify", "email", "guilds"],
           }, (accessToken, refreshToken, profile, done) => {
             // Check that the user is in the required guild and
