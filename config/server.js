@@ -7,6 +7,7 @@ module.exports = ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
   url: env('PUBLIC_URL'),
+  proxy: env.bool("BEHIND_PROXY", false),
   admin: {
     auth: {
       secret: env('JWT_SECRET'),
@@ -18,7 +19,7 @@ module.exports = ({ env }) => ({
           createStrategy: strapi => new DiscordStrategy({
             clientID: env("DISCORD_CLIENT_ID"),
             clientSecret: env("DISCORD_CLIENT_SECRET"),
-            callbackURL: env("PUBLIC_URL") + strapi.admin.services.passport.getStrategyCallbackURL("discord"),
+            callbackURL: strapi.admin.services.passport.getStrategyCallbackURL("discord"),
             scope: ["identify", "email", "guilds"],
           }, (accessToken, refreshToken, profile, done) => {
             // Check that the user is in the required guild and
@@ -40,7 +41,7 @@ module.exports = ({ env }) => ({
       ],
     },
     serveAdminPanel: true,
-    url: env('PUBLIC_URL') + "/dashboard",
+    url: "/dashboard",
     autoOpen: false
   },
 });
