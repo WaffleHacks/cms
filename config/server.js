@@ -40,7 +40,7 @@ module.exports = ({ env }) => ({
       ],
     },
     serveAdminPanel: true,
-    url: "/dashboard",
+    url: env('PUBLIC_URL') + "/dashboard",
     autoOpen: false
   },
 });
