@@ -27,7 +27,13 @@
         "images"
       ],
       "plugin": "upload",
-      "required": true
+      "required": true,
+      "pluginOptions": {}
+    },
+    "short_description": {
+      "type": "string",
+      "required": true,
+      "maxLength": 280
     }
   }
 }
