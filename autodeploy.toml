@@ -1,4 +1,9 @@
 [[deploy]]
 action = "command"
+command = "/usr/bin/npm"
+args = ["run", "build"]
+
+[[deploy]]
+action = "command"
 command = "systemctl"
 args = ["restart", "cms.service"]
