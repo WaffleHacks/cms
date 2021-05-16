@@ -1,0 +1,4 @@
+[[deploy]]
+action = "command"
+command = "systemctl"
+args = ["restart", "cms.service"]
