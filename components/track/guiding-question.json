@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_track_guiding_questions",
+  "info": {
+    "name": "Guiding Question",
+    "icon": "comment"
+  },
+  "options": {},
+  "attributes": {
+    "content": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

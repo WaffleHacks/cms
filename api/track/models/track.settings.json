@@ -30,10 +30,11 @@
       "required": true,
       "pluginOptions": {}
     },
-    "short_description": {
-      "type": "string",
-      "required": true,
-      "maxLength": 280
+    "guiding_question": {
+      "type": "component",
+      "repeatable": true,
+      "component": "track.guiding-question",
+      "required": true
     }
   }
 }
