@@ -1,0 +1,42 @@
+'use strict';
+
+const internals = {
+  isEE: true,
+  licenseInfo: { type: "gold" },
+};
+const features = {
+  bronze: [],
+  silver: [],
+  gold: ['sso'],
+};
+
+module.exports = () => true;
+
+Object.defineProperty(module.exports, 'licenseInfo', {
+  get: () => internals.licenseInfo,
+  configurable: false,
+  enumerable: false,
+});
+
+Object.defineProperty(module.exports, 'isEE', {
+  get: () => internals.isEE,
+  configurable: false,
+  enumerable: false,
+});
+
+Object.defineProperty(module.exports, 'features', {
+  get: () => {
+    const { type: licenseType } = module.exports.licenseInfo;
+
+    return {
+      isEnabled(feature) {
+        return features[licenseType].includes(feature);
+      },
+      getEnabled() {
+        return features[licenseType];
+      },
+    };
+  },
+  configurable: false,
+  enumerable: false,
+});
