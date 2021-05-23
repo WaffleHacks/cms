@@ -1,5 +1,9 @@
 FROM node:14-alpine
 
+# Switch to non-root user
+RUN adduser -D app
+USER app
+
 WORKDIR /cms
 
 # Install dependencies
