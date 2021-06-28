@@ -115,3 +115,4 @@ build
 .strapi-updater.json
 
 dev.env
+.docker

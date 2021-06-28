@@ -4,3 +4,4 @@ node_modules
 .env
 .strapi-updater.json
 license.txt
+.docker
