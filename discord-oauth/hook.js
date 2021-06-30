@@ -21,21 +21,19 @@ async function findUser(service, id) {
 
 /**
  * Create a user and map them to their OIDC ID
- * @param {Object} users - the users service
- * @param {Object} mappings - the mapping service
- * @param {Object} files - the files service
+ * @param {Object} services - a collection of the files, mapping, and users services
  * @param {string} id - the user's OIDC ID
  * @param {string} avatar - the user's profile picture ID
  * @param {Object} userData - arbitrary user data to set on the user
  * @returns {Promise<void>}
  */
-async function createUser(users, mappings, files, id, avatar, userData) {
+async function createUser(services, id, avatar, userData) {
   // Create the profile picture
-  userData.avatar_id = await files.importOne(`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`);
+  userData.avatar_id = await services.files.importOne(`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`);
 
   // Create the user
-  const user_id = await users.createOne(userData);
-  await mappings.createOne({ id, user_id });
+  const user_id = await services.users.createOne(userData);
+  await services.mappings.createOne({ id, user_id });
 }
 
 module.exports = function registerHook({ env, services }) {
@@ -65,9 +63,11 @@ module.exports = function registerHook({ env, services }) {
       if (!authorized) return input;
 
       // Open the services
-      const files = new FilesService({ schema, accountability: HOOK_ACCOUNTABILITY });
-      const mappings = new ItemsService("directus_oauth", { schema });
-      const users = new UsersService({ schema });
+      const instances = {
+        files: new FilesService({ schema, accountability: HOOK_ACCOUNTABILITY }),
+        mappings: new ItemsService("directus_oauth", { schema }),
+        users: new UsersService({ schema }),
+      };
 
       // Build the user's data
       const userData = {
@@ -77,9 +77,9 @@ module.exports = function registerHook({ env, services }) {
       }
 
       // Create or update the user
-      const userId = await findUser(mappings, id);
-      if (userId === undefined) await createUser(users, mappings, files, id, avatar, userData);
-      else await users.updateOne(userId, userData);
+      const userId = await findUser(instances.mappings, id);
+      if (userId === undefined) await createUser(instances, id, avatar, userData);
+      else await instances.users.updateOne(userId, userData);
 
       return input;
     },
