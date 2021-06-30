@@ -4,25 +4,32 @@ const axios = require("axios");
 // From: https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
 const MANAGE_SERVER_FlAG = 0x20;
 
-async function upsertUser(service, email, userData, exceptions) {
-  try {
-    // Create the user if they don't exist
-    return await service.createOne({ 
-      email, 
-      ...userData,
-    });
-  } catch (e) {
-    try {
-      // If they do exist, ensure their details are up-to-date
-      const ids = await service.updateByQuery({ filter: { email: { _eq: email } } }, userData);
-      return ids[0];
-    } catch (e) {
-      throw new exceptions.ServiceUnavailableException(e);
-    }
-  }
+/**
+ * Find a user by their ID
+ * @param {Object} service - the mappings service
+ * @param {string} id - the user OIDC ID
+ * @returns {Promise<string>} - the user's ID if found
+ */
+async function findUser(service, id) {
+  const records = await service.readByQuery({filter: {id: {_eq: id}}, limit: 1});
+  if (records.length === 0) return undefined;
+  return records[0].user_id;
 }
 
-module.exports = function registerHook({ env, exceptions, services }) {
+/**
+ * Create a user and map them to their OIDC ID
+ * @param {Object} users - the users service
+ * @param {Object} mappings - the mapping service
+ * @param {string} id - the user's OIDC ID
+ * @param {Object} userData - arbitrary user data to set on the user
+ * @returns {Promise<void>}
+ */
+async function createUser(users, mappings, id, userData) {
+  const user_id = await users.createOne(userData);
+  await mappings.createOne({ id, user_id });
+}
+
+module.exports = function registerHook({ env, services }) {
   const { FilesService, ItemsService, UsersService } = services;
   const { DISCORD_GUILD_ID } = env;
 
@@ -38,24 +45,24 @@ module.exports = function registerHook({ env, exceptions, services }) {
       // Determine if the user is authorized by checking if they are in the correct guild,
       // and are either the owner or have the MANAGE_SERVER permission
       const { data: guilds } = await axios.get(
-        "https://discord.com/api/v9/users/@me/guilds", 
+        "https://discord.com/api/v9/users/@me/guilds",
         { headers: { "Authorization": `Bearer ${access_token}` } }
       );
-      const authorized = guilds.some(g => 
-        g.id === DISCORD_GUILD_ID 
+      const authorized = guilds.some(g =>
+        g.id === DISCORD_GUILD_ID
         && (g.owner || g.permission & MANAGE_SERVER_FlAG === MANAGE_SERVER_FlAG)
       );
 
       if (!authorized) return input;
 
-      // Check if the user already exists
+      // Open the services
+      const files = new FilesService({ schema });
       const mappings = new ItemsService("directus_oauth", { schema });
-      const userMapping = mappings.readByQuery({ filter: { id: { _eq: id } }, limit: 1 });
+      const users = new UsersService({ schema });
 
       // TODO: fix profile uploading
       /*
       // Upload the user's profile picture
-      const files = new FilesService({ schema, accountability });
       const avatarId = await files.importOne(`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`);
       */
 
@@ -63,16 +70,14 @@ module.exports = function registerHook({ env, exceptions, services }) {
       const userData = {
         first_name: username,
         last_name: discriminator,
+        email,
         //avatar: avatarId,
-      };
+      }
 
-      // Create/update the user
-      const users = new UsersService({ schema });
-      const user_id = await upsertUser(users, email, userData, exceptions);
-
-      // Map the user's ID to the provider ID
-      const mappings = new ItemsService("directus_oauth", { schema });
-      await mappings.upsertOne({ id, user_id });
+      // Create or update the user
+      const userId = await findUser(mappings, id);
+      if (userId === undefined) await createUser(users, mappings, id, userData);
+      else await users.updateOne(userId, userData);
 
       return input;
     },
