@@ -1,4 +1,4 @@
-FROM directus/directus:v9-rc.82
+FROM directus/directus:9.0.0-rc.85
 
 ENV OAUTH_DISCORD_SCOPE "identify email guilds"
 
