@@ -36,13 +36,30 @@ async function createUser(services, id, avatar, userData) {
   await services.mappings.createOne({ id, user_id });
 }
 
+/**
+ * Find a role by its name
+ * @param {Object} service - the roles service
+ * @param {string} name - the name of the role to find
+ */
+async function getRoleByName(service, name) {
+  const records = await service.readByQuery({filter: {name: {_eq: name}}, limit: 1});
+  if (records.length === 0) return null;
+  return records[0].id;
+}
+
 module.exports = function registerHook({ env, services }) {
-  const { FilesService, ItemsService, UsersService } = services;
-  const { DISCORD_GUILD_ID } = env;
+  const { FilesService, ItemsService, RolesService , UsersService } = services;
+  const { DISCORD_GUILD_ID, NEW_USER_ROLE } = env;
 
   if (DISCORD_GUILD_ID === "") {
     console.error("The DISCORD_GUILD_ID environment variable must be set!");
+  } else if (NEW_USER_ROLE === "") {
+    NEW_USER_ROLE = "Editor";
   }
+
+  // Set later once someone attempts to login
+  let user_role = null;
+  let admin_role = null;
 
   return {
     "oauth.discord.login.before": async function(input, { payload, schema }) {
@@ -55,25 +72,32 @@ module.exports = function registerHook({ env, services }) {
         "https://discord.com/api/v9/users/@me/guilds",
         { headers: { "Authorization": `Bearer ${access_token}` } }
       );
-      const authorized = guilds.some(g =>
+      const authorized = guilds.filter(g =>
         g.id === DISCORD_GUILD_ID
         && (g.owner || g.permission & MANAGE_SERVER_FlAG === MANAGE_SERVER_FlAG)
       );
 
-      if (!authorized) return input;
+      if (authorized.length === 0) return input;
+      const guild = authorized[0];
 
       // Open the services
       const instances = {
         files: new FilesService({ schema, accountability: HOOK_ACCOUNTABILITY }),
         mappings: new ItemsService("directus_oauth", { schema }),
+        roles: new RolesService({ schema }),
         users: new UsersService({ schema }),
       };
+
+      // Refresh role states
+      if (user_role === null) user_role = await getRoleByName(instances.roles, NEW_USER_ROLE);
+      if (admin_role === null) admin_role = await getRoleByName(instances.roles, "Admin");
 
       // Build the user's data
       const userData = {
         first_name: username,
         last_name: discriminator,
         email,
+        role: guild.owner ? admin_role : user_role,
       }
 
       // Create or update the user
