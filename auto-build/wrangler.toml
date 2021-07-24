@@ -4,6 +4,9 @@ type = "javascript"
 account_id = "bfa855c54ea8067ac8533b3822f63c2d"
 workers_dev = true
 
+[vars]
+ACCOUNT_ID = "bfa855c54ea8067ac8533b3822f63c2d"
+
 [build]
 command = "npm install && npm run build"
 [build.upload]
