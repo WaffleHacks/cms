@@ -7,6 +7,14 @@ declare global {
 }
 
 const endpoint = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pages/projects/${PAGES_PROJECT}/deployments`
+const params = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json;charset=UTF-8',
+    'X-Auth-Email': ACCOUNT_EMAIL,
+    'X-Auth-Key': ACCOUNT_TOKEN,
+  },
+}
 
 export async function handleRequest(request: Request): Promise<Response> {
   // Check the request is authorized
@@ -20,14 +28,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   }
 
   // Send the build trigger
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-      'X-Auth-Email': ACCOUNT_EMAIL,
-      'X-Auth-Key': ACCOUNT_TOKEN,
-    },
-  })
+  const response = await fetch(endpoint, params)
 
   return new Response(null, { status: response.status })
 }
