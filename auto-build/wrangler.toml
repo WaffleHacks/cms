@@ -1,8 +1,7 @@
 name = "auto-build"
 type = "javascript"
-zone_id = ""
-account_id = ""
-route = ""
+
+account_id = "bfa855c54ea8067ac8533b3822f63c2d"
 workers_dev = true
 
 [build]
