@@ -72,12 +72,10 @@ module.exports = function registerHook({ env, services }) {
         "https://discord.com/api/v9/users/@me/guilds",
         { headers: { "Authorization": `Bearer ${access_token}` } }
       );
-      console.log(guilds);
       const authorized = guilds.filter(g =>
         g.id === DISCORD_GUILD_ID
-        && (g.owner || g.permission & MANAGE_SERVER_FlAG === MANAGE_SERVER_FlAG)
+        && (g.owner || g.permissions & MANAGE_SERVER_FlAG === MANAGE_SERVER_FlAG)
       );
-      console.log(authorized);
 
       if (authorized.length === 0) return input;
       const guild = authorized[0];
