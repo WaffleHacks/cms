@@ -49,11 +49,11 @@ async function getRoleByName(service, name) {
 
 module.exports = function registerHook({ env, services }) {
   const { FilesService, ItemsService, RolesService , UsersService } = services;
-  const { DISCORD_GUILD_ID, NEW_USER_ROLE } = env;
+  let { DISCORD_GUILD_ID, NEW_USER_ROLE } = env;
 
   if (DISCORD_GUILD_ID === "") {
     console.error("The DISCORD_GUILD_ID environment variable must be set!");
-  } else if (NEW_USER_ROLE === "") {
+  } else if (NEW_USER_ROLE === undefined || NEW_USER_ROLE === "" || NEW_USER_ROLE === null) {
     NEW_USER_ROLE = "Editor";
   }
 
