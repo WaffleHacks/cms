@@ -29,7 +29,7 @@ async function findUser(service, id) {
  */
 async function createUser(services, id, avatar, userData) {
   // Create the profile picture
-  userData.avatar = await services.files.importOne(`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`);
+  if (avatar !== null) userData.avatar = await services.files.importOne(`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`);
 
   // Create the user
   const user_id = await services.users.createOne(userData);
