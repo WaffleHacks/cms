@@ -1,11 +1,13 @@
 name = "auto-build"
 type = "javascript"
 
-account_id = "bfa855c54ea8067ac8533b3822f63c2d"
+account_id = "200a2fa0d0fd6259eba3ff410b2936e8"
 workers_dev = true
 
+compatibility_date = "2021-11-03"
+
 [vars]
-ACCOUNT_ID = "bfa855c54ea8067ac8533b3822f63c2d"
+ACCOUNT_ID = "200a2fa0d0fd6259eba3ff410b2936e8"
 
 [build]
 command = "npm install && npm run build"
